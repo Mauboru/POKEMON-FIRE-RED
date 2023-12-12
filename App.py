@@ -46,20 +46,20 @@ fundo = pygame.image.load("assets/Background/fundo.png")
 menu = pygame.image.load("assets/HUD/menu.png")
 player = pygame.image.load("assets/Player/player_idle.png")
 option = pygame.image.load("assets/HUD/bar-options.png")
+bar_life = pygame.image.load("assets/HUD/bar-life-back.png")
 life = pygame.image.load("assets/HUD/bar-life.png")
 cursor = pygame.image.load("assets/Outros/cursor.png")
 enemy, nome, nivel = get_pokemon()
 
 #Iniciando o inimigo
 pokemon = Pokemon(nome, nivel, 10)
-print(pokemon)
 
 # Redimensionando as imagens
 fundo = pygame.transform.scale(fundo, (largura, 340))
 player = pygame.transform.scale(player, (largura//2, altura//3))
 menu = pygame.transform.scale(menu, (largura, 140))
 option = pygame.transform.scale(option, (largura//2, 140))
-life = pygame.transform.scale(life, (largura//2, altura//6))
+bar_life = pygame.transform.scale(bar_life, (largura//2, altura//6))
 enemy = pygame.transform.scale(enemy, (largura//5, altura//4))
 cursor = pygame.transform.scale(cursor, (largura//25, altura//20))
 
@@ -114,7 +114,7 @@ while rodando:
     janela.blit(player, (60, 180))
     janela.blit(menu, (0, 340))
     janela.blit(option, (320, 340))
-    janela.blit(life, (20, 20))
+    janela.blit(bar_life, (20, 20))
     
     # Desenha o nome e o nível na tela
     fonte = pygame.font.Font('fonts/pokemon_fire_red.ttf', 38)
