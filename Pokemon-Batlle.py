@@ -1,7 +1,30 @@
 import pygame
 import sys
+import requests
+import random
+import io
 
 pygame.init()
+
+#Funções
+def get_pokemon():
+    numero = random.randint(1, 898)
+    api = f"https://pokeapi.co/api/v2/pokemon/{numero}/"
+    response = requests.get(api)
+    dados = response.json()
+    sprite_url = dados['sprites']['versions']['generation-v']['black-white']['animated']['front_default']
+    response_imagem = requests.get(sprite_url)
+    imagem_bytes = io.BytesIO(response_imagem.content)
+    sprite = pygame.image.load(imagem_bytes)
+    sprite = pygame.transform.scale(sprite, (largura//5, altura//4))
+    return sprite
+
+def key_down(key):
+    if evento.type == pygame.KEYDOWN:
+        if evento.key == key:
+            return True
+        else:
+            return False
 
 # Configurações da janela
 largura, altura = 640, 480
@@ -9,13 +32,13 @@ janela = pygame.display.set_mode((largura, altura))
 pygame.display.set_caption('Pokémon Battle')
 
 # Carregue as imagens para o fundo e outros elementos
-fundo = pygame.image.load("sprites/fundo.png")
-menu = pygame.image.load("sprites/menu.png")
-player = pygame.image.load("sprites/player_idle.png")
-option = pygame.image.load("sprites/bar-options.png")
-life = pygame.image.load("sprites/bar-life.png")
-cursor = pygame.image.load("sprites/cursor.png")
-enemy = pygame.image.load("sprites/enemy.png")
+fundo = pygame.image.load("assets/Background/fundo.png")
+menu = pygame.image.load("assets/HUD/menu.png")
+player = pygame.image.load("assets/Player/player_idle.png")
+option = pygame.image.load("assets/HUD/bar-options.png")
+life = pygame.image.load("assets/HUD/bar-life.png")
+cursor = pygame.image.load("assets/Outros/cursor.png")
+enemy = get_pokemon()
 
 # Redimensione as imagens para preencher a janela mantendo a proporção
 fundo = pygame.transform.scale(fundo, (largura, 340))
@@ -37,14 +60,6 @@ pygame.mixer.music.play(True)
 # Efeito sonoro para as setas
 sf_teclas = pygame.mixer.Sound("musics/firered_00A0.wav")
 sf_teclas.set_volume(.7)
-
-#Funções
-def key_down(key):
-    if evento.type == pygame.KEYDOWN:
-        if evento.key == key:
-            return True
-        else:
-            return False
 
 # Loop principal do jogo
 rodando = True
