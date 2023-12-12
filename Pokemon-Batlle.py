@@ -8,16 +8,25 @@ pygame.init()
 
 #Funções
 def get_pokemon():
-    numero = random.randint(1, 898)
-    api = f"https://pokeapi.co/api/v2/pokemon/{numero}/"
-    response = requests.get(api)
-    dados = response.json()
-    sprite_url = dados['sprites']['versions']['generation-v']['black-white']['animated']['front_default']
-    response_imagem = requests.get(sprite_url)
-    imagem_bytes = io.BytesIO(response_imagem.content)
-    sprite = pygame.image.load(imagem_bytes)
-    sprite = pygame.transform.scale(sprite, (largura//5, altura//4))
-    return sprite
+    try:
+        numero = random.randint(1, 898)
+        api = f"https://pokeapi.co/api/v2/pokemon/{numero}/"
+        response = requests.get(api)
+        dados = response.json()
+
+        #Info do pokemon
+        sprite_url = dados['sprites']['versions']['generation-v']['black-white']['animated']['front_default']
+        nome = dados['name']
+        nivel = dados['stats'][random.randint(0,5)]
+
+        response_imagem = requests.get(sprite_url)
+        imagem_bytes = io.BytesIO(response_imagem.content)
+        sprite = pygame.image.load(imagem_bytes)
+        sprite = pygame.transform.scale(sprite, (largura//5, altura//5))
+        return sprite
+    except Exception as e:
+        print(f"Erro ao carregar o sprite: {e}")
+        return get_pokemon()
 
 def key_down(key):
     if evento.type == pygame.KEYDOWN:
