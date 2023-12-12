@@ -1,8 +1,8 @@
 class Pokemon:
-    def __init__(self, nome, sprite, nivel):
+    def __init__(self, nome, nivel, life):
         self.__nome = nome
-        self.__sprite = sprite
         self.__nivel = nivel
+        self.__life = life * nivel
         
     def get_nome(self):
         return self.__nome
@@ -10,14 +10,17 @@ class Pokemon:
     def set_nome(self, nome):
         self.__nome = nome
     
-    def get_sprite(self):
-        return self.__sprite
-    
-    def set_sprite(self, sprite):
-        self.__sprite = sprite
-    
     def get_nivel(self):
         return self.__nivel
     
     def set_nivel(self, nivel):
         self.__nivel = nivel
+        
+    def get_life(self):
+        return self.__life
+    
+    def set_life(self, life):
+        self.__life = life
+        
+    def __str__(self):
+        return f"{self.__nome}\n{self.__nivel}\n{self.__life}"
