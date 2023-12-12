@@ -5,7 +5,7 @@ pygame.init()
 
 # Configurações da janela
 largura, altura = 640, 480
-tela = pygame.display.set_mode((largura, altura))
+janela = pygame.display.set_mode((largura, altura))
 pygame.display.set_caption('Pokémon Battle')
 
 # Carregue as imagens para o fundo e outros elementos
@@ -17,7 +17,7 @@ life = pygame.image.load("sprites/bar-life.png")
 cursor = pygame.image.load("sprites/cursor.png")
 enemy = pygame.image.load("sprites/enemy.png")
 
-# Redimensione as imagens para preencher a tela mantendo a proporção
+# Redimensione as imagens para preencher a janela mantendo a proporção
 fundo = pygame.transform.scale(fundo, (largura, 340))
 player = pygame.transform.scale(player, (largura//2, altura//3))
 menu = pygame.transform.scale(menu, (largura, 140))
@@ -31,12 +31,23 @@ cursor_x, cursor_y = 335, 380
 
 # Carregando a música de fundo
 pygame.mixer.music.load("musics/Battle!.mp3")
+pygame.mixer.music.set_volume(.1)
 pygame.mixer.music.play(True)
-pygame.mixer.music.set_volume(.5)
+
+# Efeito sonoro para as setas
+sf_teclas = pygame.mixer.Sound("musics/firered_00A0.wav")
+sf_teclas.set_volume(.7)
+
+#Funções
+def key_down(key):
+    if evento.type == pygame.KEYDOWN:
+        if evento.key == key:
+            return True
+        else:
+            return False
 
 # Loop principal do jogo
 rodando = True
-cima = True
 while rodando:
     for evento in pygame.event.get():
         if evento.type == pygame.QUIT:
@@ -44,38 +55,39 @@ while rodando:
 
         # Controle de teclado para mover o cursor
         if evento.type == pygame.KEYDOWN:
-            #troca posicao
-            if evento.key == pygame.K_UP or evento.key == pygame.K_DOWN :
-                cima = not cima
-                pygame.mixer.music.load("musics/firered_00A0.wav")
-                pygame.mixer.music.play(False)
-                pygame.mixer.music.set_volume(.5)
-            if cima:
+            if evento.key == pygame.K_UP :
+                sf_teclas.play()
                 cursor_y = 380
-            elif not cima:
+            elif evento.key == pygame.K_DOWN:
+                sf_teclas.play()
                 cursor_y = 425
-            if evento.key == pygame.K_LEFT:
+            elif evento.key == pygame.K_LEFT:
+                sf_teclas.play()
                 cursor_x = 335
-                pygame.mixer.music.load("musics/firered_00A0.wav")
-                pygame.mixer.music.play(False)
-                pygame.mixer.music.set_volume(.5)
             elif evento.key == pygame.K_RIGHT:
+                sf_teclas.play()
                 cursor_x = 485
-                pygame.mixer.music.load("musics/firered_00A0.wav")
-                pygame.mixer.music.play(False)
-                pygame.mixer.music.set_volume(.5)
-    print(cima, cursor_x, cursor_y)
 
     # Atualize a lógica do jogo aqui
+    if cursor_y == 380 and cursor_x == 335:
+        if key_down(pygame.K_RETURN):
+            #fazer algo
+            print()
+    elif cursor_y == 380 and cursor_x == 485:
+        print('mochila')
+    elif cursor_y == 425 and cursor_x == 335:
+        print('pokemon')
+    elif cursor_y == 425 and cursor_x == 485:
+        print('fugir')
 
-    # Desenhe os elementos na tela
-    tela.blit(fundo, (0, 0))
-    tela.blit(player, (120, 180))
-    tela.blit(menu, (0, 340))
-    tela.blit(option, (320, 340))
-    tela.blit(life, (20, 20))
-    tela.blit(enemy, (400, 80))
-    tela.blit(cursor, (cursor_x, cursor_y))
+    # Desenhe os elementos na janela
+    janela.blit(fundo, (0, 0))
+    janela.blit(player, (120, 180))
+    janela.blit(menu, (0, 340))
+    janela.blit(option, (320, 340))
+    janela.blit(life, (20, 20))
+    janela.blit(enemy, (400, 80))
+    janela.blit(cursor, (cursor_x, cursor_y))
     pygame.display.flip()
 
 # Encerre o Pygame
