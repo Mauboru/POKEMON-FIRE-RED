@@ -17,13 +17,12 @@ def get_pokemon():
         #Info do pokemon
         sprite_url = dados['sprites']['versions']['generation-v']['black-white']['animated']['front_default']
         nome = dados['name']
-        nivel = dados['stats'][random.randint(0,5)]
 
         response_imagem = requests.get(sprite_url)
         imagem_bytes = io.BytesIO(response_imagem.content)
         sprite = pygame.image.load(imagem_bytes)
-        sprite = pygame.transform.scale(sprite, (largura//5, altura//5))
-        return sprite
+        sprite = pygame.transform.scale(sprite, (largura//4, altura//4))
+        return sprite, nome
     except Exception as e:
         print(f"Erro ao carregar o sprite: {e}")
         return get_pokemon()
@@ -47,7 +46,8 @@ player = pygame.image.load("assets/Player/player_idle.png")
 option = pygame.image.load("assets/HUD/bar-options.png")
 life = pygame.image.load("assets/HUD/bar-life.png")
 cursor = pygame.image.load("assets/Outros/cursor.png")
-enemy = get_pokemon()
+enemy, enemy_nome = get_pokemon()
+nivel = random.randint(1,10)
 
 # Redimensione as imagens para preencher a janela mantendo a proporção
 fundo = pygame.transform.scale(fundo, (largura, 340))
@@ -110,6 +110,14 @@ while rodando:
     janela.blit(menu, (0, 340))
     janela.blit(option, (320, 340))
     janela.blit(life, (20, 20))
+    
+    # Desenha o nome e o nível na tela
+    fonte = pygame.font.Font('fonts/pokemon_fire_red.ttf', 36)
+    nome_texto = fonte.render(f"{enemy_nome}", True, (54, 54, 54))
+    nivel_texto = fonte.render(f"{nivel}", True, (54, 54, 54))
+    janela.blit(nome_texto, (40, 25))
+    janela.blit(nivel_texto, (285, 25))
+    
     janela.blit(enemy, (400, 80))
     janela.blit(cursor, (cursor_x, cursor_y))
     pygame.display.flip()
