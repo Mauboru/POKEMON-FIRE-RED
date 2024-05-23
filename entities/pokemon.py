@@ -22,5 +22,10 @@ class Pokemon:
     def set_life(self, life):
         self.__life = life
         
+    def takeDamage(self, damage):
+        self.__life -= damage
+        if self.__life < 0:
+            self.__life = 0
+
     def __str__(self):
         return f"Nome: {self.__nome}\nNivel: {self.__nivel}\nVida: {self.__life}"

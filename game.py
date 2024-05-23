@@ -22,7 +22,7 @@ class Game:
         # Iniciando o inimigo
         self.pokemon = Pokemon(self.nome, self.nivel, self.life)
 
-        print(self.pokemon.__str__())
+        print(self.pokemon.get_life())
         
         # Redimensionando as imagens
         self.fundo = pygame.transform.scale(self.fundo, (self.largura, 340))
@@ -46,6 +46,8 @@ class Game:
         self.sf_teclas = pygame.mixer.Sound("musics/firered_00A0.wav")
         self.sf_teclas.set_volume(.7)
 
+        self.enter_pressed = False
+
     def run(self):
         rodando = True
         while rodando:
@@ -67,12 +69,19 @@ class Game:
                     elif evento.key == pygame.K_RIGHT:
                         self.sf_teclas.play()
                         self.cursor_x = 485
+                    elif evento.key == pygame.K_RETURN:
+                        self.enter_pressed = True
 
-            # Atualize a lógica do jogo aqui
+                if evento.type == pygame.KEYUP:
+                    if evento.key == pygame.K_RETURN:
+                        self.enter_pressed = False
+
+            # Lógica do jogo
             if self.cursor_y == 380 and self.cursor_x == 335:
-                if key_down(evento, pygame.K_RETURN):
-                    # fazer algo
-                    print()
+                if self.enter_pressed:
+                    self.pokemon.takeDamage(1)
+                    print(self.pokemon.get_life())
+                    self.enter_pressed = False
             elif self.cursor_y == 380 and self.cursor_x == 485:
                 print('mochila')
             elif self.cursor_y == 425 and self.cursor_x == 335:
