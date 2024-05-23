@@ -14,8 +14,9 @@ class Game:
         self.menu = pygame.image.load("assets/HUD/menu.png")
         self.player = pygame.image.load("assets/Player/player_idle.png")
         self.option = pygame.image.load("assets/HUD/bar-options.png")
-        self.bar_life = pygame.image.load("assets/HUD/bar-life-back.png")
+        self.lifeBarBack = pygame.image.load("assets/HUD/bar-life-back.png")
         self.cursor = pygame.image.load("assets/Outros/cursor.png")
+        self.lifeBar = pygame.image.load("assets/HUD/bar-life.png")
         self.enemy, self.nome, self.nivel, self.life = get_pokemon(self.largura, self.altura)
         
         # Iniciando o inimigo
@@ -28,7 +29,8 @@ class Game:
         self.player = pygame.transform.scale(self.player, (self.largura // 2, self.altura // 3))
         self.menu = pygame.transform.scale(self.menu, (self.largura, 140))
         self.option = pygame.transform.scale(self.option, (self.largura // 2, 140))
-        self.bar_life = pygame.transform.scale(self.bar_life, (self.largura // 2, self.altura // 6))
+        self.lifeBarBack = pygame.transform.scale(self.lifeBarBack, (self.largura // 2, self.altura // 6))
+        self.lifeBar = pygame.transform.scale(self.lifeBar, (self.largura // 4, self.altura // 38))
         self.enemy = pygame.transform.scale(self.enemy, (self.largura // 5, self.altura // 4))
         self.cursor = pygame.transform.scale(self.cursor, (self.largura // 25, self.altura // 20))
 
@@ -83,7 +85,8 @@ class Game:
             self.janela.blit(self.player, (60, 180))
             self.janela.blit(self.menu, (0, 340))
             self.janela.blit(self.option, (320, 340))
-            self.janela.blit(self.bar_life, (20, 20))
+            self.janela.blit(self.lifeBarBack, (20, 20))
+            self.janela.blit(self.lifeBar, (142, 65))
             
             # Desenha o nome e o nível na tela
             fonte = pygame.font.Font('fonts/pokemon_fire_red.ttf', 38)
