@@ -21,8 +21,6 @@ class Game:
         
         # Iniciando o inimigo
         self.pokemon = Pokemon(self.nome, self.nivel, self.life)
-
-        print(self.pokemon.get_life())
         
         # Redimensionando as imagens
         self.fundo = pygame.transform.scale(self.fundo, (self.largura, 340))
@@ -30,7 +28,6 @@ class Game:
         self.menu = pygame.transform.scale(self.menu, (self.largura, 140))
         self.option = pygame.transform.scale(self.option, (self.largura // 2, 140))
         self.lifeBarBack = pygame.transform.scale(self.lifeBarBack, (self.largura // 2, self.altura // 6))
-        self.lifeBar = pygame.transform.scale(self.lifeBar, (self.largura // 4, self.altura // 38))
         self.enemy = pygame.transform.scale(self.enemy, (self.largura // 5, self.altura // 4))
         self.cursor = pygame.transform.scale(self.cursor, (self.largura // 25, self.altura // 20))
 
@@ -80,7 +77,6 @@ class Game:
             if self.cursor_y == 380 and self.cursor_x == 335:
                 if self.enter_pressed:
                     self.pokemon.takeDamage(1)
-                    print(self.pokemon.get_life())
                     self.enter_pressed = False
             elif self.cursor_y == 380 and self.cursor_x == 485:
                 print('mochila')
@@ -95,8 +91,13 @@ class Game:
             self.janela.blit(self.menu, (0, 340))
             self.janela.blit(self.option, (320, 340))
             self.janela.blit(self.lifeBarBack, (20, 20))
+
+            # Calcular a largura da barra de vida
+            max_life_width = self.largura // 2 - 162
+            current_life_width = int((self.pokemon.get_life() / self.pokemon.get_maxLife()) * max_life_width)
+            self.lifeBar = pygame.transform.scale(pygame.image.load("assets/HUD/bar-life.png"), (current_life_width, self.altura // 38))
             self.janela.blit(self.lifeBar, (142, 65))
-            
+
             # Desenha o nome e o nível na tela
             fonte = pygame.font.Font('fonts/pokemon_fire_red.ttf', 38)
             nome_texto = fonte.render(f"{self.nome}", True, (54, 54, 54))

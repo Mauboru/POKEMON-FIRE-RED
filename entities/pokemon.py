@@ -3,6 +3,7 @@ class Pokemon:
         self.__nome = nome
         self.__nivel = nivel
         self.__life = life
+        self.__maxLife = life
         
     def get_nome(self):
         return self.__nome
@@ -21,6 +22,9 @@ class Pokemon:
     
     def set_life(self, life):
         self.__life = life
+
+    def get_maxLife(self):
+        return self.__maxLife
         
     def takeDamage(self, damage):
         self.__life -= damage
