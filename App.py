@@ -1,8 +1,4 @@
-import pygame
-import sys
-import requests
-import random
-import io
+import pygame, sys, requests, random, io
 from entities.pokemon import Pokemon
 
 pygame.init()
