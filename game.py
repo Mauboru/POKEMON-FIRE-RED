@@ -16,10 +16,12 @@ class Game:
         self.option = pygame.image.load("assets/HUD/bar-options.png")
         self.bar_life = pygame.image.load("assets/HUD/bar-life-back.png")
         self.cursor = pygame.image.load("assets/Outros/cursor.png")
-        self.enemy, self.nome, self.nivel = get_pokemon(self.largura, self.altura)
+        self.enemy, self.nome, self.nivel, self.life = get_pokemon(self.largura, self.altura)
         
         # Iniciando o inimigo
-        self.pokemon = Pokemon(self.nome, self.nivel, 10)
+        self.pokemon = Pokemon(self.nome, self.nivel, self.life)
+
+        print(self.pokemon.__str__())
         
         # Redimensionando as imagens
         self.fundo = pygame.transform.scale(self.fundo, (self.largura, 340))
