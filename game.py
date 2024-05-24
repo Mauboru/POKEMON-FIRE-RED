@@ -1,4 +1,4 @@
-import pygame, sys
+import pygame, sys, random
 from entities.pokemon import Pokemon
 from utils import get_pokemon, key_down
 
@@ -40,8 +40,11 @@ class Game:
         pygame.mixer.music.play(True)
         
         # Efeito sonoro para as setas
-        self.sf_teclas = pygame.mixer.Sound("musics/firered_00A0.wav")
+        self.sf_teclas = pygame.mixer.Sound("musics/effects/menu/firered_00A0.wav")
         self.sf_teclas.set_volume(.7)
+
+        self.sfAttack1 = pygame.mixer.Sound("musics/effects/battle/firered_000C.wav")
+        self.sfAttack2 = pygame.mixer.Sound("musics/effects/battle/firered_000D.wav")
 
         self.enter_pressed = False
 
@@ -77,7 +80,9 @@ class Game:
             if self.cursor_y == 380 and self.cursor_x == 335:
                 if self.enter_pressed:
                     self.pokemon.takeDamage(1)
+                    random.choice([self.sfAttack1, self.sfAttack2]).play()
                     self.enter_pressed = False
+
             elif self.cursor_y == 380 and self.cursor_x == 485:
                 print('mochila')
             elif self.cursor_y == 425 and self.cursor_x == 335:
