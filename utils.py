@@ -28,7 +28,7 @@ def key_down(evento, key):
             return True
     return False
 
-def get_initials_pokemo(largura, altura):
+def get_initials_pokemons(largura, altura):
     pokemons = []
     for _ in range(3):
         pokemons.append(get_pokemon(largura, altura))

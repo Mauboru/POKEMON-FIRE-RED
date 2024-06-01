@@ -1,6 +1,6 @@
 import pygame, sys, random
 from entities.pokemon import Pokemon
-from utils import get_pokemon, key_down
+from utils import get_pokemon, key_down, get_initials_pokemons
 
 class Game:
     def __init__(self):
@@ -8,6 +8,11 @@ class Game:
         self.largura, self.altura = 640, 480
         self.janela = pygame.display.set_mode((self.largura, self.altura))
         pygame.display.set_caption('Pokémon Battle')
+
+        # Carregando tela de selecao de pokemon
+        selector = PokemonSelector(self.largura, self.altura)
+        self.selected_pokemon = selector.run(self.janela)
+        self.selected_sprite, self.nome, self.nivel, self.life = self.selected_pokemon
         
         # Carregando as imagens
         self.fundo = pygame.image.load("assets/Background/fundo.png")
@@ -18,7 +23,7 @@ class Game:
         self.cursor = pygame.image.load("assets/Outros/cursor.png")
         self.lifeBar = pygame.image.load("assets/HUD/bar-life.png")
         self.enemy, self.nome, self.nivel, self.life = get_pokemon(self.largura, self.altura)
-        
+    
         # Iniciando o inimigo
         self.pokemon = Pokemon(self.nome, self.nivel, self.life)
         
@@ -30,6 +35,7 @@ class Game:
         self.lifeBarBack = pygame.transform.scale(self.lifeBarBack, (self.largura // 2, self.altura // 6))
         self.enemy = pygame.transform.scale(self.enemy, (self.largura // 5, self.altura // 4))
         self.cursor = pygame.transform.scale(self.cursor, (self.largura // 25, self.altura // 20))
+        self.selected_sprite = pygame.transform.scale(self.selected_sprite, (self.largura // 5, self.altura // 4))
 
         # Posição inicial do cursor
         self.cursor_x, self.cursor_y = 335, 380
@@ -50,7 +56,11 @@ class Game:
 
     def run(self):
         rodando = True
+        start_time = pygame.time.get_ticks()
         while rodando:
+            current_time = pygame.time.get_ticks()
+            elapsed_time = current_time - start_time
+
             for evento in pygame.event.get():
                 if evento.type == pygame.QUIT:
                     rodando = False
@@ -92,7 +102,11 @@ class Game:
 
             # Desenhe os elementos na janela
             self.janela.blit(self.fundo, (0, 0))
-            self.janela.blit(self.player, (60, 180))
+            if elapsed_time < 3000:
+                self.janela.blit(self.player, (60, 180))
+            else:
+                self.janela.blit(self.selected_sprite, (60, 180))
+
             self.janela.blit(self.menu, (0, 340))
             self.janela.blit(self.option, (320, 340))
             self.janela.blit(self.lifeBarBack, (20, 20))
@@ -116,3 +130,46 @@ class Game:
 
         pygame.quit()
         sys.exit()
+
+class PokemonSelector:
+    def __init__(self, largura, altura):
+        self.largura = largura
+        self.altura = altura
+        self.pokemons = get_initials_pokemons(largura, altura)
+        self.selected = 0
+        self.last_key_press_time = 0
+        self.key_cooldown = 200 
+    
+    def run(self, janela):
+        rodando = True
+        while rodando:
+            current_time = pygame.time.get_ticks()
+            for evento in pygame.event.get():
+                if evento.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+            
+            if evento.type == pygame.KEYDOWN and (current_time - self.last_key_press_time > self.key_cooldown):
+                self.last_key_press_time = current_time
+                if evento.key == pygame.K_LEFT:
+                    self.selected = (self.selected - 1) % 3
+                elif evento.key == pygame.K_RIGHT:
+                    self.selected = (self.selected + 1) % 3
+                elif evento.key == pygame.K_RETURN:
+                    return self.pokemons[self.selected]
+                
+            janela.fill((255, 255, 255))
+            fonte = pygame.font.Font('fonts/pokemon_fire_red.ttf', 36)
+
+            for index, (sprite, nome, nivel, life) in enumerate(self.pokemons):
+                x = self.largura // 4 * (index + 1) - sprite.get_width() // 2
+                y = self.altura // 2 - sprite.get_height() // 2
+                janela.blit(sprite, (x, y))
+                if index == self.selected:
+                    pygame.draw.rect(janela, (255, 0, 0), (x - 5, y - 5, sprite.get_width() + 10, sprite.get_height() + 10), 3)
+                nome_texto = fonte.render(nome, True, (0, 0, 0))
+                janela.blit(nome_texto, (x, y + sprite.get_height() + 10))
+
+            pygame.display.flip()
+
+# proxima classe
