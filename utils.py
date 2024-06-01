@@ -27,3 +27,9 @@ def key_down(evento, key):
         if evento.key == key:
             return True
     return False
+
+def get_initials_pokemo(largura, altura):
+    pokemons = []
+    for _ in range(3):
+        pokemons.append(get_pokemon(largura, altura))
+    return pokemons
