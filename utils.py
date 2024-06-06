@@ -8,16 +8,24 @@ def get_pokemon(largura, altura):
         dados = response.json()
 
         # Info do pokemon
-        sprite_url = dados['sprites']['versions']['generation-v']['black-white']['animated']['front_default']
+        front = dados['sprites']['versions']['generation-v']['black-white']['animated']['front_default']
+        back = dados['sprites']['versions']['generation-v']['black-white']['animated']['back_default']
         nome = dados['name']
         nivel = random.randint(1, 10)
         life = random.randint(12, 36)
 
-        response_imagem = requests.get(sprite_url)
+        response_imagem = requests.get(front)
         imagem_bytes = io.BytesIO(response_imagem.content)
-        sprite = pygame.image.load(imagem_bytes)
-        sprite = pygame.transform.scale(sprite, (largura // 4, altura // 4))
-        return sprite, nome, nivel, life
+
+        sprite_front = pygame.image.load(imagem_bytes)
+        sprite_front = pygame.transform.scale(sprite_front, (largura // 4, altura // 4))
+
+        response_imagem = requests.get(back)
+        imagem_bytes = io.BytesIO(response_imagem.content)
+
+        sprite_back = pygame.image.load(imagem_bytes)
+        sprite_back = pygame.transform.scale(sprite_back, (largura // 4, altura // 4))
+        return sprite_front, nome, nivel, life
     except Exception as e:
         print(f"Erro ao carregar o sprite: {e}")
         return get_pokemon(largura, altura)
