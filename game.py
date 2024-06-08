@@ -13,7 +13,7 @@ class Game:
         selector = PokemonSelector(self.largura, self.altura)
         self.selected_pokemon = selector.run(self.janela)
         self.selected_sprite, self.nome, self.nivel, self.life = self.selected_pokemon
-        
+
         # Carregando as imagens
         self.fundo = pygame.image.load("assets/Background/fundo.png")
         self.menu = pygame.image.load("assets/HUD/menu.png")
@@ -132,44 +132,51 @@ class Game:
         sys.exit()
 
 class PokemonSelector:
-    def __init__(self, largura, altura):
-        self.largura = largura
-        self.altura = altura
-        self.pokemons = get_initials_pokemons(largura, altura)
-        self.selected = 0
-        self.last_key_press_time = 0
-        self.key_cooldown = 200 
+    def __init__(self, width, height):
+        self.width = width
+        self.height = height
+        self.pokemons = get_initials_pokemons(width, height)
+        self.pokemon_selected = 0
+
+        # pygame.mixer.music.load("musics/Battle!.mp3")
+        # pygame.mixer.music.set_volume(.1)
+        # pygame.mixer.music.play(True)
+        
+        self.sf_teclas = pygame.mixer.Sound("musics/effects/menu/firered_00A0.wav")
+        self.sf_teclas.set_volume(.7)
     
-    def run(self, janela):
-        rodando = True
-        while rodando:
-            current_time = pygame.time.get_ticks()
-            for evento in pygame.event.get():
-                if evento.type == pygame.QUIT:
+    def run(self, window):
+        while True:
+            for events in pygame.event.get():
+                if events.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
             
-            if evento.type == pygame.KEYDOWN and (current_time - self.last_key_press_time > self.key_cooldown):
-                self.last_key_press_time = current_time
-                if evento.key == pygame.K_LEFT:
-                    self.selected = (self.selected - 1) % 3
-                elif evento.key == pygame.K_RIGHT:
-                    self.selected = (self.selected + 1) % 3
-                elif evento.key == pygame.K_RETURN:
-                    return self.pokemons[self.selected]
+            if events.type == pygame.KEYDOWN:
+                if events.key == pygame.K_LEFT:
+                    self.pokemon_selected = (self.pokemon_selected - 1) % 3
+                    self.sf_teclas.play()
+                elif events.key == pygame.K_RIGHT:
+                    self.pokemon_selected = (self.pokemon_selected + 1) % 3
+                    self.sf_teclas.play()
+                elif events.key == pygame.K_RETURN:
+                    # adicionar som de confirmacao
+                    return self.pokemons[self.pokemon_selected]
                 
-            janela.fill((255, 255, 255))
-            fonte = pygame.font.Font('fonts/pokemon_fire_red.ttf', 36)
+            window.fill((255, 255, 255)) # adicionar imagem de fundo
+            fonts = pygame.font.Font('fonts/pokemon_fire_red.ttf', 38)
 
-            for index, (sprite, nome, nivel, life) in enumerate(self.pokemons):
-                x = self.largura // 4 * (index + 1) - sprite.get_width() // 2
-                y = self.altura // 2 - sprite.get_height() // 2
-                janela.blit(sprite, (x, y))
-                if index == self.selected:
-                    pygame.draw.rect(janela, (255, 0, 0), (x - 5, y - 5, sprite.get_width() + 10, sprite.get_height() + 10), 3)
-                nome_texto = fonte.render(nome, True, (0, 0, 0))
-                janela.blit(nome_texto, (x, y + sprite.get_height() + 10))
+            for index, (sprite, name, level, life) in enumerate(self.pokemons):
+                x = (self.width // 4) * (index + 1) - (sprite.get_width() // 2) #80, 240, 400
+                y = self.height // 2.7                                          #177
+                window.blit(sprite, (x, y))
+
+                if index == self.pokemon_selected:
+                    # desenhar o quadrado seletor
+                    pygame.draw.rect(window, (255, 0, 0), (x - 5, y - 5, sprite.get_width() + 10, sprite.get_height() + 10), 3)
+                name_text = fonts.render(name, True, (0, 0, 0))
+                window.blit(name_text, (x + 32, y + sprite.get_height() + 20))
 
             pygame.display.flip()
 
-# proxima classe
+# ---
