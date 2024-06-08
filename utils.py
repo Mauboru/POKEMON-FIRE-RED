@@ -36,6 +36,10 @@ def key_down(evento, key):
             return True
     return False
 
+def set_volume_for_sounds(sounds, volume):
+    for sound in sounds:
+        sound.set_volume(volume)
+
 def get_initials_pokemons(largura, altura):
     pokemons = []
     for _ in range(3):

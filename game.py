@@ -1,6 +1,6 @@
 import pygame, sys, random
 from entities.pokemon import Pokemon
-from utils import get_pokemon, key_down, get_initials_pokemons
+from utils import get_pokemon, key_down, get_initials_pokemons, set_volume_for_sounds
 
 class Game:
     def __init__(self):
@@ -138,12 +138,18 @@ class PokemonSelector:
         self.pokemons = get_initials_pokemons(width, height)
         self.pokemon_selected = 0
 
-        # pygame.mixer.music.load("musics/Battle!.mp3")
-        # pygame.mixer.music.set_volume(.1)
-        # pygame.mixer.music.play(True)
+        self.text_font = pygame.font.Font('fonts/pokemon_fire_red.ttf', 38)
+
+        pygame.mixer.music.load("musics/1-20. Pokémon Gym.mp3")
+        pygame.mixer.music.set_volume(.1)
+        pygame.mixer.music.play(True)
         
-        self.sf_teclas = pygame.mixer.Sound("musics/effects/menu/firered_00A0.wav")
-        self.sf_teclas.set_volume(.7)
+        self.sf_key = pygame.mixer.Sound("musics/effects/menu/select.wav")
+        self.sf_key_selected = pygame.mixer.Sound("musics/effects/menu/selected.wav")
+        self.sf_key_selected.set_volume(1)
+
+        sounds = [self.sf_key]
+        set_volume_for_sounds(sounds, .1)
     
     def run(self, window):
         while True:
@@ -155,26 +161,26 @@ class PokemonSelector:
             if events.type == pygame.KEYDOWN:
                 if events.key == pygame.K_LEFT:
                     self.pokemon_selected = (self.pokemon_selected - 1) % 3
-                    self.sf_teclas.play()
+                    self.sf_key.play()
                 elif events.key == pygame.K_RIGHT:
                     self.pokemon_selected = (self.pokemon_selected + 1) % 3
-                    self.sf_teclas.play()
+                    self.sf_key.play()
                 elif events.key == pygame.K_RETURN:
-                    # adicionar som de confirmacao
+                    self.sf_key_selected.play()
                     return self.pokemons[self.pokemon_selected]
                 
-            window.fill((255, 255, 255)) # adicionar imagem de fundo
-            fonts = pygame.font.Font('fonts/pokemon_fire_red.ttf', 38)
+            window.fill((255, 255, 255))
+            # desenhar o titulo ou inserir sprite do projeto
 
             for index, (sprite, name, level, life) in enumerate(self.pokemons):
                 x = (self.width // 4) * (index + 1) - (sprite.get_width() // 2) #80, 240, 400
-                y = self.height // 2.7                                          #177
+                y = self.height // 2                                            #320
                 window.blit(sprite, (x, y))
 
                 if index == self.pokemon_selected:
                     # desenhar o quadrado seletor
-                    pygame.draw.rect(window, (255, 0, 0), (x - 5, y - 5, sprite.get_width() + 10, sprite.get_height() + 10), 3)
-                name_text = fonts.render(name, True, (0, 0, 0))
+                    continue
+                name_text = self.text_font.render(name, True, (0, 0, 0))
                 window.blit(name_text, (x + 32, y + sprite.get_height() + 20))
 
             pygame.display.flip()
