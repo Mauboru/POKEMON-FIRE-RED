@@ -46,7 +46,7 @@ class Game:
         pygame.mixer.music.play(True)
         
         # Efeito sonoro para as setas
-        self.sf_teclas = pygame.mixer.Sound("musics/effects/menu/firered_00A0.wav")
+        self.sf_teclas = pygame.mixer.Sound("musics/effects/menu/select.wav")
         self.sf_teclas.set_volume(.7)
 
         self.sfAttack1 = pygame.mixer.Sound("musics/effects/battle/firered_000C.wav")
@@ -137,6 +137,13 @@ class PokemonSelector:
         self.height = height
         self.pokemons = get_initials_pokemons(width, height)
         self.pokemon_selected = 0
+        self.key_pressed = False
+
+        self.fundo = pygame.image.load("assets/Background/menu.png")
+        self.title = pygame.image.load("assets/others/title.png")
+        self.credits = pygame.image.load("assets/others/credits.png")
+        self.pokeball = pygame.image.load("assets/others/pokeball.png")
+        self.pokeball_x = 80
 
         self.text_font = pygame.font.Font('fonts/pokemon_fire_red.ttf', 38)
 
@@ -158,30 +165,42 @@ class PokemonSelector:
                     pygame.quit()
                     sys.exit()
             
-            if events.type == pygame.KEYDOWN:
+            if events.type == pygame.KEYDOWN and not self.key_pressed:
+                self.key_pressed = True
                 if events.key == pygame.K_LEFT:
                     self.pokemon_selected = (self.pokemon_selected - 1) % 3
                     self.sf_key.play()
+                    self.pokeball_x -= 160
+
                 elif events.key == pygame.K_RIGHT:
                     self.pokemon_selected = (self.pokemon_selected + 1) % 3
                     self.sf_key.play()
+                    self.pokeball_x += 160
+
                 elif events.key == pygame.K_RETURN:
                     self.sf_key_selected.play()
                     return self.pokemons[self.pokemon_selected]
+            
+            if self.pokeball_x > 400: self.pokeball_x = 80
+            elif self.pokeball_x < 80: self.pokeball_x = 400
+
+            if events.type == pygame.KEYUP:
+                    self.key_pressed = False
                 
-            window.fill((255, 255, 255))
             # desenhar o titulo ou inserir sprite do projeto
+            window.blit(self.fundo, (0, 0))
+            window.blit(self.title, (100, 60))
+            window.blit(self.credits, (300, 120))
 
             for index, (sprite, name, level, life) in enumerate(self.pokemons):
                 x = (self.width // 4) * (index + 1) - (sprite.get_width() // 2) #80, 240, 400
-                y = self.height // 2                                            #320
+                y = self.height // 2 + 30                                       #320
                 window.blit(sprite, (x, y))
 
-                if index == self.pokemon_selected:
-                    # desenhar o quadrado seletor
-                    continue
-                name_text = self.text_font.render(name, True, (0, 0, 0))
+                name_text = self.text_font.render(name, True, (255, 255, 255))
                 window.blit(name_text, (x + 32, y + sprite.get_height() + 20))
+
+            window.blit(self.pokeball, (self.pokeball_x, 320))
 
             pygame.display.flip()
 
