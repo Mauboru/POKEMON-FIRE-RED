@@ -25,7 +25,7 @@ def get_pokemon(largura, altura):
 
         sprite_back = pygame.image.load(imagem_bytes)
         sprite_back = pygame.transform.scale(sprite_back, (largura // 4, altura // 4))
-        return sprite_front, nome, nivel, life
+        return sprite_front, sprite_back, nome, nivel, life
     except Exception as e:
         print(f"Erro ao carregar o sprite: {e}")
         return get_pokemon(largura, altura)
