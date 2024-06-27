@@ -6,33 +6,32 @@ class Game:
     def __init__(self):
         pygame.init()
         self.width, self.height = 640, 480
-        self.janela = pygame.display.set_mode((self.width, self.height))
+        self.window = pygame.display.set_mode((self.width, self.height))
         pygame.display.set_caption('Pokémon System Battle')
 
-        selector = PokemonSelector(self.width, self.height)
-        self.selected_pokemon = selector.run(self.janela)
-        self.front, self.back, self.nome, self.nivel, self.life = self.selected_pokemon
-        self.pokemon = Pokemon(self.nome, self.nivel, self.life)
+        self.selected_pokemon = PokemonSelector(self.width, self.height).run(self.window)
+
+        self.player_front, self.player_back, self.player_name, self.player_level, self.player_life = self.selected_pokemon
+        self.enemy_front, self.enemy_back, self.enemy_name, self.enemy_level, self.enemy_life = get_pokemon(self.width, self.height)
+
+        self.player = Pokemon(self.player_name, self.player_level, self.player_life)
+        self.enemy = Pokemon(self.enemy_name, self.enemy_level, self.enemy_life)
 
         self.fundo = pygame.image.load("assets/background/fundo.png")
         self.menu = pygame.image.load("assets/hud/menu.png")
-        self.player = pygame.image.load("assets/player/player_idle.png")
         self.option = pygame.image.load("assets/hud/bar-options.png")
         self.lifeBarBack = pygame.image.load("assets/hud/bar-life-back.png")
         self.lifeBarBack2 = pygame.image.load("assets/hud/bar-life-back.png")
         self.cursor = pygame.image.load("assets/others/cursor.png")
-        self.lifeBar = pygame.image.load("assets/hud/bar-life.png")
-        self.enemy, self.enemy_back, self.enemy_nome, self.enemy_nivel, self.enemy_life = get_pokemon(self.width, self.height)
                 
         self.fundo = pygame.transform.scale(self.fundo, (self.width, 340))
-        self.player = pygame.transform.scale(self.player, (self.width // 2, self.height // 3))
         self.menu = pygame.transform.scale(self.menu, (self.width, 140))
         self.option = pygame.transform.scale(self.option, (self.width // 2, 140))
         self.lifeBarBack = pygame.transform.scale(self.lifeBarBack, (self.width // 2, self.height // 6))
         self.lifeBarBack2 = pygame.transform.scale(self.lifeBarBack2, (self.width // 2, self.height // 6))
-        self.enemy = pygame.transform.scale(self.enemy, (self.width // 5, self.height // 4))
         self.cursor = pygame.transform.scale(self.cursor, (self.width // 25, self.height // 20))
-        self.selected_sprite = pygame.transform.scale(self.front, (self.width // 5, self.height // 4))
+        self.pokemon_enemy = pygame.transform.scale(self.enemy_front, (self.width // 5, self.height // 4))
+        self.pokemon_player = pygame.transform.scale(self.player_back, (self.width // 5, self.height // 4))
 
         self.cursor_x, self.cursor_y = 335, 380
         
@@ -73,7 +72,7 @@ class Game:
                 elif events.key == pygame.K_RETURN:
                     if self.cursor_y == 380 and self.cursor_x == 335:
                         random.choice([self.sf_attack1, self.sf_attack2]).play()
-                        self.pokemon.takeDamage(1)
+                        self.enemy.takeDamage(1)
                     elif self.cursor_y == 380 and self.cursor_x == 485:
                         print('mochila')
                     elif self.cursor_y == 425 and self.cursor_x == 335:
@@ -84,32 +83,37 @@ class Game:
             if events.type == pygame.KEYUP:
                 self.key_pressed = False
 
-            self.janela.blit(self.fundo, (0, 0))
-            self.janela.blit(self.menu, (0, 340))
-            self.janela.blit(self.option, (320, 340))
-            self.janela.blit(self.lifeBarBack, (20, 20))
-            self.janela.blit(self.lifeBarBack2, (315, 250))
+            self.window.blit(self.fundo, (0, 0))
+            self.window.blit(self.menu, (0, 340))
+            self.window.blit(self.option, (320, 340))
+            self.window.blit(self.lifeBarBack, (20, 20))
+            self.window.blit(self.lifeBarBack2, (315, 250))
 
             max_life_width = self.width // 2 - 162
-            current_life_width = int((self.pokemon.get_life() / self.pokemon.get_maxLife()) * max_life_width)
+            current_life_width = int((self.player.get_life() / self.player.get_maxLife()) * max_life_width)
+            self.lifeBar2 = pygame.transform.scale(pygame.image.load("assets/hud/bar-life.png"), (current_life_width, self.height // 38))
+            self.window.blit(self.lifeBar2, (437, 295))
+
+            max_life_width = self.width // 2 - 162
+            current_life_width = int((self.enemy.get_life() / self.enemy.get_maxLife()) * max_life_width)
             self.lifeBar = pygame.transform.scale(pygame.image.load("assets/hud/bar-life.png"), (current_life_width, self.height // 38))
-            self.janela.blit(self.lifeBar, (142, 65))
+            self.window.blit(self.lifeBar, (142, 65))
 
             fonte = pygame.font.Font('fonts/pokemon_fire_red.ttf', 38)
 
-            enemy_nome_texto = fonte.render(f"{self.enemy_nome}", True, (54, 54, 54))
-            enemy_nivel_texto = fonte.render(f"{self.enemy_nivel}", True, (54, 54, 54))
-            self.janela.blit(enemy_nome_texto, (40, 25))
-            self.janela.blit(enemy_nivel_texto, (285, 25))
-            self.janela.blit(self.enemy, (400, 80))
+            enemy_nome_texto = fonte.render(f"{self.enemy_name}", True, (54, 54, 54))
+            enemy_nivel_texto = fonte.render(f"{self.enemy_level}", True, (54, 54, 54))
+            self.window.blit(enemy_nome_texto, (40, 25))
+            self.window.blit(enemy_nivel_texto, (285, 25))
+            self.window.blit(self.pokemon_enemy, (400, 80))
 
-            jogador_nome_texto = fonte.render(f"{self.nome}", True, (54, 54, 54))
-            jogador_nivel_texto = fonte.render(f"{self.nivel}", True, (54, 54, 54))
-            self.janela.blit(jogador_nome_texto, (350, 255))
-            self.janela.blit(jogador_nivel_texto, (580, 255))
-            self.janela.blit(self.back, (80, 200))
+            jogador_nome_texto = fonte.render(f"{self.player_name}", True, (54, 54, 54))
+            jogador_nivel_texto = fonte.render(f"{self.player_level}", True, (54, 54, 54))
+            self.window.blit(jogador_nome_texto, (350, 255))
+            self.window.blit(jogador_nivel_texto, (580, 255))
+            self.window.blit(self.pokemon_player, (80, 200))
 
-            self.janela.blit(self.cursor, (self.cursor_x, self.cursor_y))
+            self.window.blit(self.cursor, (self.cursor_x, self.cursor_y))
             pygame.display.flip()
 
 class PokemonSelector:
