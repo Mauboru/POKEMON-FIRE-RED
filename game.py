@@ -1,6 +1,6 @@
 import pygame, sys, random
 from entities.pokemon import Pokemon
-from utils import get_pokemon, key_down, get_initials_pokemons, set_volume_for_sounds
+from utils import get_pokemon, key_down, get_initials_pokemons, set_volume_for_sounds, set_damage
 
 class Game:
     def __init__(self):
@@ -42,11 +42,11 @@ class Game:
         self.sf_teclas = pygame.mixer.Sound("musics/effects/menu/select.wav")
         self.sf_teclas.set_volume(.7)
 
-        self.sf_attack1 = pygame.mixer.Sound("musics/effects/battle/firered_000C.wav")
-        self.sf_attack2 = pygame.mixer.Sound("musics/effects/battle/firered_000D.wav")
-
         self.enter_pressed = False
         self.key_pressed = False
+
+        self.message = ""
+        self.message_time = 0
 
     def run(self):
         while True:
@@ -71,8 +71,10 @@ class Game:
                     self.cursor_x = 485
                 elif events.key == pygame.K_RETURN:
                     if self.cursor_y == 380 and self.cursor_x == 335:
-                        random.choice([self.sf_attack1, self.sf_attack2]).play()
-                        self.enemy.takeDamage(1)
+                        damage, message = set_damage(2)
+                        self.enemy.takeDamage(damage)
+                        self.message = message
+                        self.message_time = pygame.time.get_ticks()
                     elif self.cursor_y == 380 and self.cursor_x == 485:
                         print('mochila')
                     elif self.cursor_y == 425 and self.cursor_x == 335:
@@ -114,6 +116,13 @@ class Game:
             self.window.blit(self.pokemon_player, (80, 200))
 
             self.window.blit(self.cursor, (self.cursor_x, self.cursor_y))
+
+            if self.message and pygame.time.get_ticks() - self.message_time < 2000:
+                message_text = fonte.render(self.message, True, (255, 255, 255))
+                self.window.blit(message_text, (30, 400))
+            elif pygame.time.get_ticks() - self.message_time >= 2000:
+                self.message = ""
+
             pygame.display.flip()
 
 class PokemonSelector:

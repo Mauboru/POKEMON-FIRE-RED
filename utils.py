@@ -1,5 +1,9 @@
 import pygame, random, requests, io
 
+pygame.init()
+sf_attack1 = pygame.mixer.Sound("musics/effects/battle/firered_000C.wav")
+sf_attack2 = pygame.mixer.Sound("musics/effects/battle/firered_000D.wav")
+
 def get_pokemon(largura, altura):
     try:
         numero = random.randint(1, 898)
@@ -45,3 +49,19 @@ def get_initials_pokemons(largura, altura):
     for _ in range(3):
         pokemons.append(get_pokemon(largura, altura))
     return pokemons
+
+def set_damage(damage):
+    d20 = random.randint(1, 20)
+    if d20 > 9 and d20 < 20:
+        message = "SUCESSFULL"
+        sf_attack2.play()
+        return damage, message
+    elif d20 < 9:
+        message = "MISS"
+        return 0, message
+    else:
+        message = "CRITICAL ATTACK"
+        sf_attack1.play()
+        return damage * 2, message
+
+# -->=
