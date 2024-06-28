@@ -47,6 +47,7 @@ class Game:
 
         self.message = ""
         self.message_time = 0
+        self.turn = "player"
 
     def run(self):
         while True:
@@ -55,35 +56,44 @@ class Game:
                     pygame.quit()
                     sys.exit()
 
-            if events.type == pygame.KEYDOWN and not self.key_pressed:
-                self.key_pressed = True
-                if events.key == pygame.K_UP:
-                    self.sf_teclas.play()
-                    self.cursor_y = 380
-                elif events.key == pygame.K_DOWN:
-                    self.sf_teclas.play()
-                    self.cursor_y = 425
-                elif events.key == pygame.K_LEFT:
-                    self.sf_teclas.play()
-                    self.cursor_x = 335
-                elif events.key == pygame.K_RIGHT:
-                    self.sf_teclas.play()
-                    self.cursor_x = 485
-                elif events.key == pygame.K_RETURN:
-                    if self.cursor_y == 380 and self.cursor_x == 335:
-                        damage, message = set_damage(2)
-                        self.enemy.takeDamage(damage)
-                        self.message = message
-                        self.message_time = pygame.time.get_ticks()
-                    elif self.cursor_y == 380 and self.cursor_x == 485:
-                        print('mochila')
-                    elif self.cursor_y == 425 and self.cursor_x == 335:
-                        print('pokemon')
-                    elif self.cursor_y == 425 and self.cursor_x == 485:
-                        print('fugir')
+            if self.turn == "player":
+                if events.type == pygame.KEYDOWN and not self.key_pressed:
+                    self.key_pressed = True
+                    if events.key == pygame.K_UP:
+                        self.sf_teclas.play()
+                        self.cursor_y = 380
+                    elif events.key == pygame.K_DOWN:
+                        self.sf_teclas.play()
+                        self.cursor_y = 425
+                    elif events.key == pygame.K_LEFT:
+                        self.sf_teclas.play()
+                        self.cursor_x = 335
+                    elif events.key == pygame.K_RIGHT:
+                        self.sf_teclas.play()
+                        self.cursor_x = 485
+                    elif events.key == pygame.K_RETURN:
+                        if self.cursor_y == 380 and self.cursor_x == 335:
+                            damage, message = set_damage(2)
+                            self.enemy.takeDamage(damage)
+                            self.message = message
+                            self.message_time = pygame.time.get_ticks()
+                            self.turn = "enemy"
+                        elif self.cursor_y == 380 and self.cursor_x == 485:
+                            print('mochila')
+                        elif self.cursor_y == 425 and self.cursor_x == 335:
+                            print('pokemon')
+                        elif self.cursor_y == 425 and self.cursor_x == 485:
+                            print('fugir')
 
-            if events.type == pygame.KEYUP:
-                self.key_pressed = False
+                if events.type == pygame.KEYUP:
+                    self.key_pressed = False
+
+            elif self.turn == "enemy":
+                damage, message = set_damage(1)
+                self.player.takeDamage(damage)
+                self.message = "Enemy's Turn: " + message
+                self.message_time = pygame.time.get_ticks()
+                self.turn = "player"                
 
             self.window.blit(self.fundo, (0, 0))
             self.window.blit(self.menu, (0, 340))
@@ -119,7 +129,7 @@ class Game:
 
             if self.message and pygame.time.get_ticks() - self.message_time < 2000:
                 message_text = fonte.render(self.message, True, (255, 255, 255))
-                self.window.blit(message_text, (30, 400))
+                self.window.blit(message_text, (30, 360))
             elif pygame.time.get_ticks() - self.message_time >= 2000:
                 self.message = ""
 
