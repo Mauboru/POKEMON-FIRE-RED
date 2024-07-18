@@ -74,7 +74,7 @@ class Game:
                     elif events.key == pygame.K_RETURN:
                         if self.cursor_y == 380 and self.cursor_x == 335:
                             damage, message = set_damage(2)
-                            self.enemy.takeDamage(damage)
+                            self.enemy.takeDamage(10)
                             self.message = message
                             self.message_time = pygame.time.get_ticks()
                             self.turn = "waiting"
@@ -90,7 +90,7 @@ class Game:
 
             elif self.turn == "enemy":
                 damage, message = set_damage(1)
-                self.player.takeDamage(damage)
+                self.player.takeDamage(10)
                 self.message = "Enemy's Turn: " + message
                 self.message_time = pygame.time.get_ticks()
                 self.turn = "waiting_after_enemy"
@@ -137,6 +137,16 @@ class Game:
                         self.turn = "enemy"
                     elif self.turn == "waiting_after_enemy":
                         self.turn = "player"
+            
+            if self.player.get_life() <= 0 or self.enemy.get_life() <= 0:
+                if self.player.get_life() <= 0:
+                    self.game_over = GameOver(self.width, self.height).run(self.window)
+                else:
+                    self.enemy_front, self.enemy_back, self.enemy_name, self.enemy_level, self.enemy_life = get_pokemon(self.width, self.height)
+                    self.enemy = Pokemon(self.enemy_name, self.enemy_level, self.enemy_life)
+                    self.pokemon_enemy = pygame.transform.scale(self.enemy_front, (self.width // 5, self.height // 4))
+                    self.message = "New enemy appears!"
+                    self.message_time = pygame.time.get_ticks()
 
             pygame.display.flip()
 
@@ -209,6 +219,39 @@ class PokemonSelector:
                 window.blit(name_text, (x + 32, y + front.get_height() + 20))
 
             window.blit(self.pokeball, (self.pokeball_x, 320))
+
+            pygame.display.flip()
+
+class GameOver:
+    def __init__(self, width, height):
+        self.width = width
+        self.height = height
+        self.key_pressed = False
+
+        self.fundo = pygame.image.load("assets/Background/menu.png")
+        self.title = pygame.image.load("assets/others/title.png")
+        self.text_font = pygame.font.Font('fonts/pokemon_fire_red.ttf', 38)
+
+        pygame.mixer.music.load("musics/1-20. Pokémon Gym.mp3")
+        pygame.mixer.music.set_volume(.1)
+        pygame.mixer.music.play(True)
+    
+    def run(self, window):
+        while True:
+            for events in pygame.event.get():
+                if events.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                elif events.type == pygame.KEYDOWN:
+                    if events.key == pygame.K_RETURN:
+                        pygame.quit()
+                        sys.exit()
+            
+            window.blit(self.fundo, (0, 0))
+            window.blit(self.title, (100, 60))
+
+            game_over_text = self.text_font.render("Game Over - Press Enter to Exit", True, (255, 255, 255))
+            window.blit(game_over_text, (self.width // 4, self.height // 2))
 
             pygame.display.flip()
 
