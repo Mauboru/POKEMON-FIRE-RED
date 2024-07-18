@@ -1,4 +1,4 @@
-import pygame, sys, random
+import pygame, sys, random, time
 from entities.pokemon import Pokemon
 from utils import get_pokemon, key_down, get_initials_pokemons, set_volume_for_sounds, set_damage
 
@@ -77,7 +77,7 @@ class Game:
                             self.enemy.takeDamage(damage)
                             self.message = message
                             self.message_time = pygame.time.get_ticks()
-                            self.turn = "enemy"
+                            self.turn = "waiting"
                         elif self.cursor_y == 380 and self.cursor_x == 485:
                             print('mochila')
                         elif self.cursor_y == 425 and self.cursor_x == 335:
@@ -93,7 +93,7 @@ class Game:
                 self.player.takeDamage(damage)
                 self.message = "Enemy's Turn: " + message
                 self.message_time = pygame.time.get_ticks()
-                self.turn = "player"                
+                self.turn = "waiting_after_enemy"
 
             self.window.blit(self.fundo, (0, 0))
             self.window.blit(self.menu, (0, 340))
@@ -127,11 +127,16 @@ class Game:
 
             self.window.blit(self.cursor, (self.cursor_x, self.cursor_y))
 
-            if self.message and pygame.time.get_ticks() - self.message_time < 2000:
-                message_text = fonte.render(self.message, True, (255, 255, 255))
-                self.window.blit(message_text, (30, 360))
-            elif pygame.time.get_ticks() - self.message_time >= 2000:
-                self.message = ""
+            if self.turn == "waiting" or self.turn == "waiting_after_enemy":
+                if self.message and pygame.time.get_ticks() - self.message_time < 2000:
+                    message_text = fonte.render(self.message, True, (255, 255, 255))
+                    self.window.blit(message_text, (30, 360))
+                elif pygame.time.get_ticks() - self.message_time >= 2000:
+                    self.message = ""
+                    if self.turn == "waiting":
+                        self.turn = "enemy"
+                    elif self.turn == "waiting_after_enemy":
+                        self.turn = "player"
 
             pygame.display.flip()
 
