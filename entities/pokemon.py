@@ -31,5 +31,10 @@ class Pokemon:
         if self.__life < 0:
             self.__life = 0
 
+    def takeHealth(self, life):
+        self.__life += life
+        if self.__life > self.__maxLife:
+            self.__life = self.__maxLife
+
     def __str__(self):
-        return f"Nome: {self.__nome}\nNivel: {self.__nivel}\nVida: {self.__life}"
+        return f"Nome: {self.__nome}\nNivel: {self.__nivel}\nVida: {self.__life}\nMaxLife: {self.__maxLife}"

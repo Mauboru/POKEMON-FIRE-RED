@@ -1,6 +1,6 @@
 import pygame, sys, random, time
 from entities.pokemon import Pokemon
-from utils import get_pokemon, key_down, get_initials_pokemons, set_volume_for_sounds, set_damage
+from utils import get_pokemon, key_down, get_initials_pokemons, set_volume_for_sounds, set_damage, set_life
 
 class Game:
     def __init__(self):
@@ -31,7 +31,7 @@ class Game:
         self.lifeBarBack2 = pygame.transform.scale(self.lifeBarBack2, (self.width // 2, self.height // 6))
         self.cursor = pygame.transform.scale(self.cursor, (self.width // 25, self.height // 20))
         self.pokemon_enemy = pygame.transform.scale(self.enemy_front, (self.width // 5, self.height // 4))
-        self.pokemon_player = pygame.transform.scale(self.player_back, (self.width // 5, self.height // 4))
+        self.pokemon_player = pygame.transform.scale(self.player_back, (self.width // 4, self.height // 4))
 
         self.cursor_x, self.cursor_y = 335, 380
         
@@ -73,27 +73,42 @@ class Game:
                         self.cursor_x = 485
                     elif events.key == pygame.K_RETURN:
                         if self.cursor_y == 380 and self.cursor_x == 335:
-                            damage, message = set_damage(2)
-                            self.enemy.takeDamage(10)
+                            damage, message = set_damage(2.5)
+                            self.enemy.takeDamage(damage)
                             self.message = message
                             self.message_time = pygame.time.get_ticks()
                             self.turn = "waiting"
                         elif self.cursor_y == 380 and self.cursor_x == 485:
-                            print('mochila')
+                            life, message = set_life(0.8, self.player.get_nivel())
+                            self.player.takeHealth(life)
+                            self.message = message
+                            self.message_time = pygame.time.get_ticks()
+                            self.turn = "waiting"
                         elif self.cursor_y == 425 and self.cursor_x == 335:
                             print('pokemon')
                         elif self.cursor_y == 425 and self.cursor_x == 485:
-                            print('fugir')
+                            pygame.quit()
+                            sys.exit()
 
                 if events.type == pygame.KEYUP:
                     self.key_pressed = False
 
             elif self.turn == "enemy":
-                damage, message = set_damage(1)
-                self.player.takeDamage(10)
-                self.message = "Enemy's Turn: " + message
-                self.message_time = pygame.time.get_ticks()
-                self.turn = "waiting_after_enemy"
+                if self.enemy.get_life() < self.enemy.get_maxLife():
+                    choice = random.randint(1, 10)
+                    if choice == 1:
+                        life, message = set_life(0.3, self.enemy.get_nivel())
+                        self.enemy.takeHealth(life)
+                        self.message = "Enemy's Turn: " + message
+                        self.message_time = pygame.time.get_ticks()
+                        self.turn = "waiting_after_enemy"
+                
+                if self.turn != "waiting_after_enemy":
+                    damage, message = set_damage(1.2)
+                    self.player.takeDamage(damage)
+                    self.message = "Enemy's Turn: " + message
+                    self.message_time = pygame.time.get_ticks()
+                    self.turn = "waiting_after_enemy"
 
             self.window.blit(self.fundo, (0, 0))
             self.window.blit(self.menu, (0, 340))
@@ -228,8 +243,7 @@ class GameOver:
         self.height = height
         self.key_pressed = False
 
-        self.fundo = pygame.image.load("assets/Background/menu.png")
-        self.title = pygame.image.load("assets/others/title.png")
+        self.fundo = pygame.image.load("assets/background/gameover.jpg")
         self.text_font = pygame.font.Font('fonts/pokemon_fire_red.ttf', 38)
 
         pygame.mixer.music.load("musics/1-20. Pokémon Gym.mp3")
@@ -246,12 +260,12 @@ class GameOver:
                     if events.key == pygame.K_RETURN:
                         pygame.quit()
                         sys.exit()
+
             
             window.blit(self.fundo, (0, 0))
-            window.blit(self.title, (100, 60))
 
             game_over_text = self.text_font.render("Game Over - Press Enter to Exit", True, (255, 255, 255))
-            window.blit(game_over_text, (self.width // 4, self.height // 2))
+            window.blit(game_over_text, (self.width // 4, (self.height // 2) + 160))
 
             pygame.display.flip()
 

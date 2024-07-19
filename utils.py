@@ -1,8 +1,10 @@
 import pygame, random, requests, io
 
 pygame.init()
+
 sf_attack1 = pygame.mixer.Sound("musics/effects/battle/firered_000C.wav")
 sf_attack2 = pygame.mixer.Sound("musics/effects/battle/firered_000D.wav")
+sf_life = pygame.mixer.Sound("musics/effects/health.wav")
 
 def get_pokemon(largura, altura):
     try:
@@ -52,16 +54,22 @@ def get_initials_pokemons(largura, altura):
 
 def set_damage(damage):
     d20 = random.randint(1, 20)
-    if d20 > 9 and d20 < 20:
-        message = "SUCESSFULL"
+    if d20 > 1 and d20 < 20:
+        message = "SUCCESSFUL"
         sf_attack2.play()
         return damage, message
-    elif d20 < 9:
+    elif d20 == 1:
         message = "MISS"
         return 0, message
     else:
         message = "CRITICAL ATTACK"
         sf_attack1.play()
         return damage * 2, message
+    
+def set_life(life, level):
+    d4 = random.randint(1, 4)
+    message = f"{d4 * level} WAS INCREASED IN YOUR LIFE!"
+    sf_life.play()
+    return life * level, message
 
 # -->=
