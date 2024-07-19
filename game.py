@@ -1,5 +1,5 @@
 import pygame, sys, random, time
-from entities.pokemon import Pokemon
+from pokemon import Pokemon
 from utils import get_pokemon, key_down, get_initials_pokemons, set_volume_for_sounds, set_damage, set_life
 
 class Game:
@@ -35,11 +35,11 @@ class Game:
 
         self.cursor_x, self.cursor_y = 335, 380
         
-        pygame.mixer.music.load("musics/Battle!.mp3")
+        pygame.mixer.music.load("assets/musics/Battle!.mp3")
         pygame.mixer.music.set_volume(.1)
         pygame.mixer.music.play(True)
         
-        self.sf_teclas = pygame.mixer.Sound("musics/effects/menu/select.wav")
+        self.sf_teclas = pygame.mixer.Sound("assets/musics/effects/menu/select.wav")
         self.sf_teclas.set_volume(.7)
 
         self.enter_pressed = False
@@ -126,7 +126,7 @@ class Game:
             self.lifeBar = pygame.transform.scale(pygame.image.load("assets/hud/bar-life.png"), (current_life_width, self.height // 38))
             self.window.blit(self.lifeBar, (142, 65))
 
-            fonte = pygame.font.Font('fonts/pokemon_fire_red.ttf', 38)
+            fonte = pygame.font.Font('assets/fonts/pokemon_fire_red.ttf', 38)
 
             enemy_nome_texto = fonte.render(f"{self.enemy_name}", True, (54, 54, 54))
             enemy_nivel_texto = fonte.render(f"{self.enemy_level}", True, (54, 54, 54))
@@ -179,14 +179,14 @@ class PokemonSelector:
         self.pokeball = pygame.image.load("assets/others/pokeball.png")
         self.pokeball_x = 80
 
-        self.text_font = pygame.font.Font('fonts/pokemon_fire_red.ttf', 38)
+        self.text_font = pygame.font.Font('assets/fonts/pokemon_fire_red.ttf', 38)
 
-        pygame.mixer.music.load("musics/1-20. Pokémon Gym.mp3")
+        pygame.mixer.music.load("assets/musics/1-20. Pokémon Gym.mp3")
         pygame.mixer.music.set_volume(.1)
         pygame.mixer.music.play(True)
         
-        self.sf_key = pygame.mixer.Sound("musics/effects/menu/select.wav")
-        self.sf_key_selected = pygame.mixer.Sound("musics/effects/menu/selected.wav")
+        self.sf_key = pygame.mixer.Sound("assets/musics/effects/menu/select.wav")
+        self.sf_key_selected = pygame.mixer.Sound("assets/musics/effects/menu/selected.wav")
         self.sf_key_selected.set_volume(1)
 
         sounds = [self.sf_key]
@@ -244,9 +244,9 @@ class GameOver:
         self.key_pressed = False
 
         self.fundo = pygame.image.load("assets/background/gameover.jpg")
-        self.text_font = pygame.font.Font('fonts/pokemon_fire_red.ttf', 38)
+        self.text_font = pygame.font.Font('assets/fonts/pokemon_fire_red.ttf', 38)
 
-        pygame.mixer.music.load("musics/1-20. Pokémon Gym.mp3")
+        pygame.mixer.music.load("assets/musics/1-20. Pokémon Gym.mp3")
         pygame.mixer.music.set_volume(.1)
         pygame.mixer.music.play(True)
     

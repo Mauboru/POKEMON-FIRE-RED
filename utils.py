@@ -2,9 +2,9 @@ import pygame, random, requests, io
 
 pygame.init()
 
-sf_attack1 = pygame.mixer.Sound("musics/effects/battle/firered_000C.wav")
-sf_attack2 = pygame.mixer.Sound("musics/effects/battle/firered_000D.wav")
-sf_life = pygame.mixer.Sound("musics/effects/health.wav")
+sf_attack1 = pygame.mixer.Sound("assets/musics/effects/battle/firered_000C.wav")
+sf_attack2 = pygame.mixer.Sound("assets/musics/effects/battle/firered_000D.wav")
+sf_life = pygame.mixer.Sound("assets/musics/effects/health.wav")
 
 def get_pokemon(largura, altura):
     try:
